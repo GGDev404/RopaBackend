@@ -21,78 +21,165 @@
   <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
   [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
 
-## Description
+# 🛒 Ecommerce Backend (NestJS + PostgreSQL)
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+¡Bienvenido! Este proyecto es un backend robusto para un e-commerce de ropa, construido con **NestJS** y **PostgreSQL**. Incluye autenticación JWT, gestión de usuarios, productos con variantes, órdenes, carrito de compras y documentación Swagger lista para producción.
 
-## Project setup
+---
 
-```bash
-$ npm install
+## 🚀 Requisitos
+- Node.js >= 18
+- npm >= 9
+- Docker y Docker Compose (opcional, recomendado para base de datos local)
+
+---
+
+## ⚡ Instalación rápida
+
+1. **Clona el repositorio:**
+   ```sh
+   git clone <url-del-repo>
+   cd ecommerce-backend
+   ```
+
+2. **Instala dependencias:**
+   ```sh
+   npm install
+   ```
+
+3. **Configura las variables de entorno:**
+   Crea un archivo `.env` en la raíz del proyecto (ya incluido en este repo). Ejemplo:
+   ```env
+   JWT_SECRET=supersecretkey
+   JWT_EXPIRES_IN=1d
+   # Para base de datos local:
+   # DB_HOST=localhost
+   # DB_PORT=5432
+   # DB_USERNAME=postgres
+   # DB_PASSWORD=postgres
+   # DB_DATABASE=ecommerce
+   # Para base de datos en Render (usa solo una opción):
+   DB_HOST=postgresql://usuario:contraseña@host:puerto/nombre_db
+   DB_PORT=5432
+   DB_USERNAME=usuario
+   DB_PASSWORD=contraseña
+   DB_DATABASE=nombre_db
+   ```
+
+4. **(Opcional) Levanta la base de datos local con Docker:**
+   ```sh
+   docker-compose up -d
+   ```
+
+5. **Inicia el servidor NestJS:**
+   ```sh
+   npm run start:dev
+   ```
+
+6. **Accede a la documentación Swagger:**
+   - [http://localhost:3000/api](http://localhost:3000/api)
+
+---
+
+## 🧩 Características principales
+- 🔒 **Autenticación JWT** (registro, login, roles)
+- 👤 **Gestión de usuarios** (admin y cliente)
+- 👕 **CRUD de productos** (con variantes de color y talla, stock)
+- 📦 **Órdenes y carrito de compras** (añadir, quitar, actualizar)
+- 📄 **Documentación Swagger** para todos los endpoints
+- ⚙️ **Variables de entorno** para fácil despliegue en Render, Railway, etc.
+- 🐳 **Soporte para base de datos remota (Render) o local (Docker)**
+
+---
+
+## 📁 Estructura de carpetas
+- `src/auth/` - Autenticación y guards
+- `src/products/` - Controlador y servicio de productos
+- `src/orders/` - Órdenes y carrito
+- `src/entities/` - Entidades TypeORM
+- `src/dto/` - DTOs de validación
+- `src/users/` - Usuarios
+
+---
+
+## 📝 Ejemplos de uso
+
+### 1. Registro de usuario
+**POST** `/auth/register`
+```json
+{
+  "email": "admin@email.com",
+  "password": "123456",
+  "role": "admin"
+}
 ```
 
-## Compile and run the project
-
-```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+### 2. Login y obtención de token
+**POST** `/auth/login`
+```json
+{
+  "email": "admin@email.com",
+  "password": "123456"
+}
+```
+**Respuesta:**
+```json
+{
+  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+}
 ```
 
-## Run tests
-
-```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+### 3. Crear producto (requiere token Bearer)
+**POST** `/products`
+```json
+{
+  "name": "Camiseta básica",
+  "description": "Camiseta 100% algodón",
+  "price": 299.99,
+  "image": "https://ejemplo.com/camiseta.jpg",
+  "category": "camisetas",
+  "available": true,
+  "stock": 50,
+  "variants": [
+    { "color": "rojo", "sizes": ["S", "M", "L"] },
+    { "color": "azul", "sizes": ["M", "L"] }
+  ]
+}
 ```
 
-## Deployment
+### 4. Añadir producto al carrito
+**POST** `/cart/add/1/2`  
+(Agrega 2 unidades del producto con id 1 al carrito del usuario autenticado)
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
-
-```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+### 5. Crear una orden a partir del carrito
+**POST** `/orders`
+```json
+{
+  "items": [
+    { "productId": 1, "quantity": 2 },
+    { "productId": 2, "quantity": 1 }
+  ]
+}
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+---
 
-## Resources
+## 🛡️ Notas para producción
+- Cambia `JWT_SECRET` por una clave segura y única.
+- Usa `synchronize: false` en producción y migra con TypeORM.
+- Configura correctamente el firewall de tu base de datos remota.
+- Usa HTTPS en despliegues públicos.
 
-Check out a few resources that may come in handy when working with NestJS:
+---
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+## 🐞 Troubleshooting
+- **Error de conexión a la base de datos:**
+  - Verifica que los datos en `.env` sean correctos.
+  - Si usas Render, asegúrate de que el campo `DB_HOST` sea la URL completa y que `ssl: { rejectUnauthorized: false }` esté en la config de TypeORM.
+- **Error de stock o migraciones:**
+  - Si cambias entidades, borra tablas o usa migraciones para evitar errores de columnas nulas.
 
-## Support
+---
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+## 📜 Licencia
+MIT
