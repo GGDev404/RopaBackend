@@ -64,6 +64,9 @@
    DB_USERNAME=usuario
    DB_PASSWORD=contraseña
    DB_DATABASE=nombre_db
+   # Configuración de CORS (dominios permitidos separados por coma):
+   CORS_ORIGINS=http://localhost:3000,http://localhost:5173
+   # Para permitir todos los orígenes: CORS_ORIGINS=*
    ```
 
 4. **(Opcional) Levanta la base de datos local con Docker:**
@@ -77,7 +80,7 @@
    ```
 
 6. **Accede a la documentación Swagger:**
-   - [http://localhost:3000/api](http://localhost:3000/api)
+   - [http://localhost:2077/api](http://localhost:2077/api)
 
 ---
 
@@ -168,6 +171,7 @@
 - Cambia `JWT_SECRET` por una clave segura y única.
 - Usa `synchronize: false` en producción y migra con TypeORM.
 - Configura correctamente el firewall de tu base de datos remota.
+- Configura `CORS_ORIGINS` con los dominios específicos de tu frontend (no uses `*` en producción).
 - Usa HTTPS en despliegues públicos.
 
 ---
